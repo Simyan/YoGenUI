@@ -83,6 +83,50 @@ export class DashboardComponent {
 
 
   submit(){}
+  submitArguments2(){ 
+    console.log('args submitted');
+    // console.log(this.argumentsForm);
+
+    for(let item of this.arguments){
+      let val = this.argumentsForm.get(item.name)?.value;
+      // console.log(val);
+      item.value = val;
+    }
+
+    // console.log(this.arguments);
+
+    let result = { name: this.detailsForm.get('generator')?.value, args: this.arguments }
+ 
+    console.log(result);
+
+    this.http.post('http://localhost:3000/submit',  result, {responseType: 'blob'})
+      .subscribe(response => {
+        // Handle the response from the server
+        const url = window.URL.createObjectURL(response);
+        window.open(url);
+        //  // Create an anchor element
+        //  const a = document.createElement('a');
+        //  a.href = url;
+        //  a.download = result.args[0].value + '.zip'; // Specify the desired filename
+ 
+        //  // Append the anchor to the body and click it to trigger the download
+        //  document.body.appendChild(a);
+        //  a.click();
+ 
+        // //  // Remove the anchor from the body
+        // //  document.body.removeChild(a);
+ 
+        // //  // Release the blob URL
+        // //  window.URL.revokeObjectURL(url);
+        console.log(response);
+      }, error => {
+        // Handle errors
+        console.error(error);
+      });
+    
+  }
+
+
   submitArguments(){ 
     console.log('args submitted');
     // console.log(this.argumentsForm);
@@ -99,14 +143,30 @@ export class DashboardComponent {
  
     console.log(result);
 
-    this.http.post('http://localhost:3000/submit', result)
-      .subscribe(response => {
-        // Handle the response from the server
-        console.log(response);
-      }, error => {
-        // Handle errors
-        console.error(error);
-      });
+    this.yogenService.downloadFile(result, 'http://localhost:3000/submit' ).subscribe(
+      (blob: Blob) => {
+        // Create a blob URL for the downloaded file
+        const url = window.URL.createObjectURL(blob);
+
+        // Create an anchor element
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = result.args[0].value + '.zip'; // Specify the desired filename
+
+        // Append the anchor to the body and click it to trigger the download
+        document.body.appendChild(a);
+        a.click();
+
+        // Remove the anchor from the body
+        document.body.removeChild(a);
+
+        // Release the blob URL
+        window.URL.revokeObjectURL(url);
+      },
+      error => {
+        console.error('Error downloading file:', error);
+      }
+    );
     
   }
 
