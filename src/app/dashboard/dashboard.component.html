@@ -1,0 +1,44 @@
+<form [formGroup]="detailsForm" (ngSubmit)="submit()">
+    <div class="col-span-6 sm:col-span-3">
+        <div class="col-span-6 sm:col-span-3">
+            <label class="block text-xs text-gray-500">
+                Select Technology
+                <span class="text-red-600">*</span>
+            </label>
+            <select formControlName="technology">
+                <option>Select Value</option>
+                <option *ngFor="let item of technologyList">
+                    {{item}}
+                </option>
+            </select>
+        </div>
+    </div>
+    <div class="col-span-6 sm:col-span-3">
+        <div class="col-span-6 sm:col-span-3">
+            <label class="block text-xs text-gray-500">
+                Select Genarators
+                <span class="text-red-600">*</span>
+            </label>
+            <select formControlName="generator">
+                <option>Select Value</option>
+                <option *ngFor="let item of generators">
+                    {{item}}
+                </option>
+            </select>
+        </div>
+    </div>
+</form>
+
+@if (arguments.length > 0){
+    <form [formGroup]="argumentsForm" (ngSubmit)="submitArguments()">
+        <!-- <div *ngFor="let controlName of Object.keys(detailsForm.controls)"> -->
+        <div *ngFor="let controlName of formControlNames()">
+        <!-- <div *ngFor="let controlName of argumentsForm['controls'].key"> -->
+            <label [for]="controlName">{{getPrompt(controlName)}}:</label><br>
+            <input type="text" [id]="controlName" [formControlName]="controlName"><br>
+          </div>
+    
+          <button type="submit" value="submit" id="btn" [disabled]="!argumentsForm.valid">Submit</button>
+    </form>
+}
+
